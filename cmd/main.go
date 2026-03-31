@@ -29,6 +29,7 @@ func main() {
 	})
 	router.POST("/users", usersHandler.CreateUser)
 	router.POST("/accounts", accountsHandler.CreateAccount)
+	router.POST("/transfer", accountsHandler.Transfer)
 
 	log.Println("🚀 Server running on :8080")
 	router.Run(":8080")

@@ -17,6 +17,13 @@ func RunMigrations(db *sql.DB) {
 			user_id INT REFERENCES users(id),
 			balance NUMERIC DEFAULT 0
 		);`,
+		`CREATE TABLE IF NOT EXISTS transfers (
+			id SERIAL PRIMARY KEY,
+			from_account_id INT,
+			to_account_id INT,
+			amount NUMERIC,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		)`,
 	}
 
 	for _, q := range queries {

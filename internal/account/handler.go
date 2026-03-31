@@ -34,3 +34,20 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"account_id": id})
 }
+
+func (h *Handler) Transfer(c *gin.Context) {
+	var req TransferRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.Repo.Transfer(req)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"status": "success"})
+}
