@@ -27,9 +27,16 @@ func main() {
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
+
+	// GET
+	router.GET("/users", usersHandler.GetUsers)
+	router.GET("/accounts", accountsHandler.GetAccounts)
+	router.GET("/transfers", accountsHandler.GetTransfers)
+
+	// POST
 	router.POST("/users", usersHandler.CreateUser)
 	router.POST("/accounts", accountsHandler.CreateAccount)
-	router.POST("/transfer", accountsHandler.Transfer)
+	router.POST("/transfers", accountsHandler.Transfer)
 
 	log.Println("🚀 Server running on :8080")
 	router.Run(":8080")

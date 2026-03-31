@@ -5,9 +5,9 @@ import (
 )
 
 type TransferRequest struct {
-	FromAccountID int     `json:"from_account_id"`
-	ToAccountID   int     `json:"to_account_id"`
-	Amount        float64 `json:"amount"`
+	FromAccountID int     `json:"from_account_id" binding:"required,gt=0"`
+	ToAccountID   int     `json:"to_account_id" binding:"required,gt=0"`
+	Amount        float64 `json:"amount" binding:"required,gt=0"`
 }
 
 func (r *Repository) Transfer(req TransferRequest) error {
@@ -104,4 +104,26 @@ func (r *Repository) Transfer(req TransferRequest) error {
 
 	// Commit transaction
 	return tx.Commit()
+}
+
+func (r *Repository) GetTransfers() ([]Transfer, error) {
+	rows, err := r.DB.Query(`SELECT id, from_account_id, to_account_id, amount, created_at FROM transfers`)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var transfers []Transfer
+
+	for rows.Next() {
+		var t Transfer
+		err := rows.Scan(&t.ID, &t.FromAccountID, &t.ToAccountID, &t.Amount, &t.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		transfers = append(transfers, t)
+	}
+	return transfers, nil
+
 }
