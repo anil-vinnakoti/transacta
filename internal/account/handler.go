@@ -2,6 +2,7 @@ package account
 
 import (
 	"net/http"
+	"transacta/internal/validation"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,7 @@ type Handler struct {
 }
 
 type CreateAccountRequest struct {
-	UserID  int     `json:"user_id" binding:"required"`
+	UserID  int     `json:"user_id" binding:"required,gt=0"`
 	Balance float64 `json:"balance" binding:"required,gte=0"`
 }
 
@@ -23,7 +24,10 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	var req CreateAccountRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{
+			"error":   "validation_failed",
+			"details": validation.FormatValidationError(err),
+		})
 		return
 	}
 
@@ -40,7 +44,10 @@ func (h *Handler) Transfer(c *gin.Context) {
 	var req TransferRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{
+			"error":   "validation_failed",
+			"details": validation.FormatValidationError(err),
+		})
 		return
 	}
 

@@ -2,6 +2,7 @@ package users
 
 import (
 	"net/http"
+	"transacta/internal/validation"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,10 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	var req CreateUserRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{
+			"error":   "validation_failed",
+			"details": validation.FormatValidationError(err),
+		})
 		return
 	}
 
