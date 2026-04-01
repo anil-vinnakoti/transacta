@@ -40,3 +40,16 @@ func (r *Repository) GetAccounts() ([]Account, error) {
 	}
 	return accounts, nil
 }
+
+func (r *Repository) IsAccountOwnedByUser(accountID, userID int) (bool, error) {
+	var exists bool
+
+	err := r.DB.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1 FROM accounts 
+			WHERE id=$1 AND user_id=$2
+		)
+	`, accountID, userID).Scan(&exists)
+
+	return exists, err
+}

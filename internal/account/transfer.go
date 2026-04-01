@@ -5,6 +5,7 @@ import (
 )
 
 type TransferRequest struct {
+	UserId        int     `json:"user_id" binding:"required,gt=0"`
 	FromAccountID int     `json:"from_account_id" binding:"required,gt=0"`
 	ToAccountID   int     `json:"to_account_id" binding:"required,gt=0,nefield=FromAccountID"`
 	Amount        float64 `json:"amount" binding:"required,gt=0"`

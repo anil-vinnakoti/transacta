@@ -51,6 +51,19 @@ func (h *Handler) Transfer(c *gin.Context) {
 		return
 	}
 
+	//	userID := getUserFromContext(c) // later (JWT)
+
+	// isOwner, err := h.Repo.IsAccountOwnedByUser(req.FromAccountID, userID)
+	// if err != nil {
+	// 	c.JSON(500, gin.H{"error": "internal error"})
+	// 	return
+	// }
+
+	// if !isOwner {
+	// 	c.JSON(403, gin.H{"error": "unauthorized account"})
+	// 	return
+	// }
+
 	err := h.Repo.Transfer(req)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
