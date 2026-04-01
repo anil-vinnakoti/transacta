@@ -4,6 +4,7 @@ import (
 	"log"
 	"transacta/internal/account"
 	"transacta/internal/db"
+	"transacta/internal/middleware"
 	"transacta/internal/users"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,12 @@ func main() {
 	database := db.Connect()
 	db.RunMigrations(database)
 
-	router := gin.Default()
+	router := gin.New()
+
+	// Middleware order (IMPORTANT)
+	router.Use(gin.Recovery())         // panic safety
+	router.Use(middleware.RequestID()) // request tracing
+	router.Use(middleware.Logger())    // custom logging
 
 	// Init Repositories
 	userRepo := users.NewRepository(database)
@@ -23,9 +29,11 @@ func main() {
 	usersHandler := users.NewHandler(userRepo)
 	accountsHandler := account.NewHandler(accountRepo)
 
-	// Routes
+	// Health check
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
+		c.JSON(200, gin.H{
+			"status": "ok",
+		})
 	})
 
 	// GET
